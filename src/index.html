@@ -1,0 +1,50 @@
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: rgb(39, 39, 39);
+            color: teal;
+        }
+
+        a {
+            color: teal;
+        }
+
+        .center {
+            margin: auto;
+            width: 50%;
+            border: 3px solid teal;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .fake-link {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+    </style>
+    <script type="text/javascript">
+        function postShutdown() {
+            let request = new XMLHttpRequest();
+            request.addEventListener("load", (event) => {
+                document.getElementById("shutdown-message").innerText = event.target.response;
+            });
+            request.addEventListener("error", () => {
+                document.getElementById("shutdown-message").innerText = "Error";
+            });
+            request.open("GET", "shutdown", true);
+            request.send();
+            
+        }
+    </script>
+</head>
+
+
+<body>
+    <h1 class="center"><span class="fake-link" onclick="postShutdown()" id="shutdown-message" >Shutdown</span></h1>
+</body>
+</html>
+
+
