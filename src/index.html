@@ -1,28 +1,43 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width">
     <style>
         body {
             background-color: rgb(39, 39, 39);
             color: teal;
         }
-
+    
         a {
             color: teal;
         }
 
+        h1 {
+            font-size: 1cm;
+        }
+    
         .center {
+            align-self: center;
             margin: auto;
-            width: 50%;
+            max-width: 20cm;
             border: 3px solid teal;
-            padding: 10px;
+            border-radius: 8pt;
+            padding: 10pt;
             text-align: center;
         }
-
+    
         .fake-link {
             text-decoration: underline;
             cursor: pointer;
         }
+    
+        /* Use a media query to add a breakpoint at 800px: */
+        @media only screen and (max-width: 20cm) {
+            .center {
+                width: 90%;
+            }
+        }
+
 
     </style>
     <script type="text/javascript">
@@ -38,12 +53,31 @@
             request.send();
             
         }
+
+        function postCancel() {
+            let request = new XMLHttpRequest();
+            request.addEventListener("load", (event) => {
+                document.getElementById("shutdown-message").innerText = event.target.response;
+            });
+            request.addEventListener("error", () => {
+                document.getElementById("shutdown-message").innerText = "Error";
+            });
+            request.open("GET", "cancel", true);
+            request.send();
+            
+        }
     </script>
 </head>
 
 
 <body>
-    <h1 class="center"><span class="fake-link" onclick="postShutdown()" id="shutdown-message" >Shutdown</span></h1>
+    <h1 class="center">
+        <span class="fake-link" onclick="postShutdown()">Shutdown</span>
+        <br />
+        <span class="fake-link" onclick="postCancel()">Cancel</span>
+        <br />
+        <span id="shutdown-message" ></span>
+    </h1>
 </body>
 </html>
 

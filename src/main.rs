@@ -1,7 +1,7 @@
 #[macro_use] extern crate rocket;
 
 use std::process::Command;
-use rocket::response::content::Html;
+use rocket::{config, response::content::Html};
 
 #[get("/")]
 fn index() -> Html<&'static str> {
@@ -19,11 +19,25 @@ fn shutdown() -> String {
     
     //let status = Command::new("shutdown.exe /s /t 1").status();
     let status = Command::new("shutdown.exe")
-        .args(["/s", "/t", "2"])
+        .args(["/s", "/t", "60"])
         .status();
 
     match status {
         Ok(exit_code) => format!("shutdown exit code {}", exit_code),
+        Err(error) => format!("Internal server error: {}", error),
+    }
+}
+
+#[get("/cancel")]
+fn cancel() -> String {
+    
+    //let status = Command::new("shutdown.exe /s /t 1").status();
+    let status = Command::new("shutdown.exe")
+        .args(["/a"])
+        .status();
+
+    match status {
+        Ok(exit_code) => format!("shutdown (cancel) exit code {}", exit_code),
         Err(error) => format!("Internal server error: {}", error),
     }
 }
@@ -35,7 +49,7 @@ async fn rocket_main() {
     // Recall that an uninspected `Error` will cause a pretty-printed panic,
     // so rest assured failures do not go undetected when using `#[launch]`.
     let _ = rocket::build()
-        .mount("/", routes![index, shutdown])
+        .mount("/", routes![index, shutdown, cancel])
         .launch()
         .await;
 }
