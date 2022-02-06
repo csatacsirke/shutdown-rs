@@ -1,7 +1,7 @@
 #[macro_use] extern crate rocket;
 
-use std::process::Command;
-use rocket::{config, response::content::Html};
+use std::process::{Command, ExitStatus};
+use rocket::{response::content::Html};
 
 #[get("/")]
 fn index() -> Html<&'static str> {
@@ -14,16 +14,25 @@ fn index() -> Html<&'static str> {
     
 }
 
+fn exit_code_to_user_message(exit_status: ExitStatus) -> String {
+    if exit_status.success() { 
+        return "Shutting down...".to_string();
+    } else {
+        return format!("Shutdown error: {}", exit_status);
+    }
+    //format!("shutdown exit code {}", exit_code)
+}
+
 #[get("/shutdown")]
 fn shutdown() -> String {
     
     //let status = Command::new("shutdown.exe /s /t 1").status();
     let status = Command::new("shutdown.exe")
-        .args(["/s", "/t", "60"])
+        .args(["/s", "/t", "5"])
         .status();
 
     match status {
-        Ok(exit_code) => format!("shutdown exit code {}", exit_code),
+        Ok(exit_code) => exit_code_to_user_message(exit_code),
         Err(error) => format!("Internal server error: {}", error),
     }
 }
